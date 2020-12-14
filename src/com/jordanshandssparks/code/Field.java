@@ -180,6 +180,38 @@ public class Field {
     populate();
   }
 
+  void printField() {
+    for (int i = 0; i < numberOfRows; i++) {
+      for (int j = 0; j < numberOfColumns; j++) {
+        printItem(field[i][j]);
+//        field[i][j] = Field.EMPTY;
+      }
+      System.out.printf("\n");
+    }
+  }
+
+  void printItem(Object item) {
+    if (item == null) {
+      System.out.printf(" ");
+    } else if (item instanceof Bush) {
+      System.out.printf("^");
+    } else if (item instanceof Fox) {
+      System.out.printf("X");
+    } else if (item instanceof Rabbit) {
+      System.out.printf("a");
+    } else if ((int)item == Field.FOX) {
+      System.out.printf("X");
+    } else if ((int)item == Field.RABBIT) {
+      System.out.printf("a");
+    } else if ((int)item == Field.EDGE) {
+      System.out.printf("|");
+    } else if ((int)item == Field.BUSH) {
+      System.out.printf("^");
+    } else {
+      System.out.printf(" ");
+    }
+  }
+
   /**
    * Puts a rabbit, a fox, and some bushes in the field.
    */
@@ -223,63 +255,13 @@ public class Field {
     for (int i = 0; i < numberOfBushes; i++) {
       int bushRow = random(0, numRows - 1);
       int bushColumn = random(0, numCols - 1);
-      if (field[bushRow][bushColumn] == Field.EMPTY) {
-        field[bushRow][bushColumn] = bush;
-      } else i--;
+//      if (field[bushRow][bushColumn] == Field.EMPTY) {
+//        field[bushRow][bushColumn] = bush;
+//      } else i--;
     }
 
     // finish
     isUnderConstruction = false;
-  }
-
-  /**
-   * Gives one animal a chance to move.
-   */
-  void allowSingleMove() {
-    Animal animal;
-    int direction;
-    int newRow;
-    int newColumn;
-
-    // make sure it's legal to allow moves
-    if (gameIsOver) return;
-
-    // prepare to save info about looks (for later use by view)
-    looks.clear();
-
-    // decide whose turn it is now (change isRabbitsTurn)
-    isRabbitsTurn = !isRabbitsTurn;
-    if (isRabbitsTurn) {
-      animal = rabbit;
-    } else { // fox's turn
-      animal = fox;
-    }
-
-    // ask the animal to decide a direction
-    direction = animal.decideMove();
-
-    // if move is legal, do it
-    if (direction != STAY) {
-      newRow = animal.row + rowChange(direction);
-      newColumn = animal.column + columnChange(direction);
-      if (isLegalLocation(newRow, newColumn) &&
-        !(field[newRow][newColumn] instanceof Bush)) {
-        moveAnimal(animal, newRow, newColumn);
-      }
-    }
-
-    // check whether move was fatal for rabbit
-    if (rabbit.row == fox.row && rabbit.column == fox.column) {
-      rabbitIsAlive = false;
-      gameIsOver = true;
-    }
-
-    // increment steps taken; check for end of game after fox's turn
-    if (isRabbitsTurn) {
-      stepsTaken++;
-    } else if (stepsTaken >= MAX_NUMBER_OF_STEPS) {
-      gameIsOver = true;
-    }
   }
 
   /**
@@ -297,8 +279,8 @@ public class Field {
    * be done before this method is invoked.
    *
    * @param animal    the animal to be relocated
-   * @param newRow    the new row number for the animal
-   * @param newColumn the new column number for the animal
+   * @param row       the new row number for the animal
+   * @param column    the new column number for the animal
    */
   private void moveAnimal(Animal animal, int row, int column) {
 
@@ -566,4 +548,69 @@ public class Field {
   public int getStepsTaken() {
     return stepsTaken;
   }
+
+  /**
+   * Gives one animal a chance to move.
+   */
+  void allowSingleMove() {
+    Animal animal;
+    int direction;
+    int newRow;
+    int newColumn;
+
+    // make sure it's legal to allow moves
+    if (gameIsOver) return;
+
+    // prepare to save info about looks (for later use by view)
+    looks.clear();
+
+    // decide whose turn it is now (change isRabbitsTurn)
+    isRabbitsTurn = !isRabbitsTurn;
+    if (isRabbitsTurn) {
+      animal = rabbit;
+    } else { // fox's turn
+      animal = fox;
+    }
+
+    // ask the animal to decide a direction
+    direction = animal.decideMove();
+
+    // if move is legal, do it
+    if (direction != STAY) {
+      newRow = animal.row + rowChange(direction);
+      newColumn = animal.column + columnChange(direction);
+      if (isLegalLocation(newRow, newColumn) &&
+        !(field[newRow][newColumn] instanceof Bush)) {
+        moveAnimal(animal, newRow, newColumn);
+      }
+    }
+
+    // check whether move was fatal for rabbit
+    if (rabbit.row == fox.row && rabbit.column == fox.column) {
+      rabbitIsAlive = false;
+      gameIsOver = true;
+    }
+
+    // increment steps taken; check for end of game after fox's turn
+    if (isRabbitsTurn) {
+      stepsTaken++;
+    } else if (stepsTaken >= MAX_NUMBER_OF_STEPS) {
+//      if (!rabbitIsAlive) {
+//        System.out.printf("\nGame Over -- %b!", rabbitIsAlive);
+//      }
+
+      gameIsOver = true;
+    }
+
+//    if (gameIsOver) {
+//      if (!rabbitIsAlive) {
+//        System.out.printf("\n-------------- %3d GameOver (%2d, %2d) (%2d, %2d)  Bunny is alive (%b); my turn (%b)\n", stepsTaken,
+//          rabbit.row, rabbit.column, fox.row, fox.column, rabbitIsAlive, isRabbitsTurn);
+//
+//        printField();
+//      }
+//    }
+
+  }
+
 }

@@ -36,12 +36,15 @@ public class Grader {
     // compute base score as percent of rabbit escapes
     int numberOfEscapes = 0;
     for (int i = 0; i < NUMBER_OF_TRIALS; i++) {
+//      System.out.printf("\n%5d -- ", i);
       model.reset();
       while (!model.gameIsOver) {
         model.allowSingleMove();
       }
       if (model.rabbitIsAlive) {
         numberOfEscapes++;
+//      } else {
+//        System.out.printf("Bunny Dies at %d\n", i);
       }
     }
     double percent = (100 * numberOfEscapes) / NUMBER_OF_TRIALS;

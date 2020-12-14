@@ -5,6 +5,13 @@ import java.util.Random;
 
 class Animal {
 
+  static public int distanceBetween(Location a, Location b) {
+    int rowDelta = a.getRow() - b.getRow();
+    int colDelta = a.getCol() - b.getCol();
+
+    return (int)Math.sqrt(rowDelta*rowDelta + colDelta*colDelta);
+  }
+
   public boolean quiet = true;
   public boolean quiet1 = true;
   public boolean quiet2 = true;
@@ -42,6 +49,10 @@ class Animal {
     }
 
     System.out.printf("%s", msg);
+  }
+
+  public int turn() {
+    return model.getStepsTaken();
   }
 
   static int random(int min, int max) {
@@ -88,8 +99,12 @@ class Fox extends Animal {
   private int directionToRabbit;
   private int currentDirection;
 
+  public Field myModel;
+
   public Fox(Field model, int row, int column) {
     super(model, row, column);
+    this.myModel = model;
+
     currentDirection = Field.random(Field.MIN_DIRECTION,
       Field.MAX_DIRECTION);
 
@@ -106,7 +121,9 @@ class Fox extends Animal {
 
         // Only print the first time rabbit has been seen
         if (distanceToRabbit == 0) {
-          print(String.format("\nSee rabbit %d squares away  (%d, %d)", distanceToObject(i), row, column));
+          Location rabbitLocation = myModel.getRabbitLocation();
+          print(String.format("\n%3d See rabbit %3d squares away  (%2d, %2d) (%2d, %2d)", myModel.getStepsTaken(), distanceToObject(i), row, column, rabbitLocation.getRow(), rabbitLocation.getCol()));
+//          System.out.print(String.format("\n%3d See rabbit %3d squares away  (%2d, %2d) (%2d, %2d)", myModel.getStepsTaken(), distanceToObject(i), row, column, rabbitLocation.getRow(), rabbitLocation.getCol()));
         }
 
         canSeeRabbitNow = haveSeenRabbit = true;
@@ -191,15 +208,37 @@ class Rabbit extends Animal {
     super(model, row, column);
   }
 
+  boolean tooFarWest() {
+    return column < 3;
+  }
+
+  boolean tooFarEast() {
+    return column > 17;
+  }
+
+  boolean tooFarNorth() {
+    return row < 3;
+  }
+
+  boolean tooFarSouth() {
+    return row > 17;
+  }
+
   static char dirSymbols[] = {'^', '7', '>', 'J', 'v', 'L', '<', '\\', '*'};
 
   public int decideMove() {
+    Location midPoint = new Location(Field.NUMBER_OF_ROWS / 2, Field.NUMBER_OF_COLUMNS /2);
     for (int i = Field.MIN_DIRECTION; i <= Field.MAX_DIRECTION; i++) {
       if (getObjectInDirection(i) == Field.FOX) {
         int distance = distanceToObject(i);
 
         // Run directly away
         int willSettleFor = (i + 4) % 8;
+
+        int bestSafeDirection = -1;     // The best direction of the safe ones
+        int bestScore = -1;
+        int chosen_j = -1;
+        int chosen_safety = -1;
 
         for (int j = Field.MIN_DIRECTION; j <= Field.MAX_DIRECTION; j++) {
           int directionFromFox = j + 3;
@@ -212,23 +251,118 @@ class Rabbit extends Animal {
             if (safety == 2) {
 //              System.out.printf("   %2d %2d %d %c %c  ", blockDistance, distance, safety, dirSymbols[(i+4) % 8], dirSymbols[directionOfBlindSpot]);
 
-              return directionOfBlindSpot;
+              int distToCenter = distanceBetween(midPoint, locationInDirection(directionOfBlindSpot));
+              int score = 30 - distToCenter;
+              if (score > bestScore) {
+                bestScore = score;
+                bestSafeDirection = directionOfBlindSpot;
+                chosen_j = j;
+                chosen_safety = safety;
+              }
+//              return directionOfBlindSpot;
+              continue;
             }
 
             if (safety > 0) {
               willSettleFor = directionFromFox;
+              chosen_j = j;
+              chosen_safety = safety;
             }
           }
 
 //          System.out.printf("XX %2d\n", blockDistance);
         }
 
+        if (bestSafeDirection != -1) {
+//          System.out.printf(" %3d Moving out of sight: %2d\n", turn(), distance);
+          return bestSafeDirection;
+        }
+
+        System.out.printf("Forced to move unsafe Dir: %d, j: %d, safety: %d\n", willSettleFor, chosen_j, chosen_safety);
+
         return willSettleFor;
       }
     }
 
+    if (tooFarWest()) {
+      if (tooFarNorth()) {
+        if (canMove(Field.SE)) {
+//          System.out.printf(" %3d Moving South-East\n", turn());
+          return Field.SE;
+        }
+      }
+
+      if (tooFarSouth()) {
+        if (canMove(Field.NE)) {
+//          System.out.printf(" %3d Moving North-East\n", turn());
+          return Field.NE;
+        }
+      }
+
+      if (canMove(Field.E)) {
+//        System.out.printf(" %3d Moving East\n", turn());
+        return Field.E;
+      }
+    }
+
+    // Not in any direct danger. Move to middle
+    if (tooFarEast()) {
+      if (tooFarNorth()) {
+        if (canMove(Field.SW)) {
+//          System.out.printf(" %3d Moving South-West\n", turn());
+          return Field.SW;
+        }
+      }
+
+      if (tooFarSouth()) {
+        if (canMove(Field.NW)) {
+//          System.out.printf(" %3d Moving North-West\n", turn());
+          return Field.NW;
+        }
+      }
+
+      if (canMove(Field.W)) {
+//        System.out.printf(" %3d Moving West\n", turn());
+        return Field.W;
+      }
+    }
+
+    if (tooFarNorth()) {
+      if (canMove(Field.S)) {
+//        System.out.printf(" %3d Moving South\n", turn());
+        return Field.S;
+      }
+    }
+
+    if (tooFarSouth()) {
+      if (canMove(Field.N)) {
+//        System.out.printf(" %3d Moving North\n", turn());
+        return Field.N;
+      }
+    }
+
+    // Move away from obstacles
+
     return Field.STAY;
 //    return random(Field.MIN_DIRECTION, Field.MAX_DIRECTION);
+  }
+
+  boolean canMove(int direction) {
+    if (direction == Field.STAY)
+      return true;
+
+    int distance  = distanceToObject(direction);
+    int object    = getObjectInDirection(direction);
+
+    if (object == Field.FOX) {
+      return distance > 2;
+    }
+
+    if (distance > 1)
+      return true;
+    if (object == Field.EDGE || object == Field.BUSH)
+      return false;
+    return true;
   }
 
   private int next(int i) {
@@ -251,7 +385,7 @@ class Rabbit extends Animal {
       return 0;
     } else if (distance == 2) {
       // 2, 3, 5, 6 are safe; 4 isn't good, but you'll last at least one more turn -- 3, 4, 5 have already been answered
-      if (turnN == 1 || turnN == 7 || turnN == 8) {
+      if (turnN == 0 || turnN == 1 || turnN == 7 || turnN == 8) {
         return 0;
       }
 
@@ -434,12 +568,12 @@ class RabbitX extends Animal {
     return new Location(row + Field.rowChange(direction), column + Field.columnChange(direction));
   }
 
-  static private int distanceBetween(Location a, Location b) {
-    int rowDelta = a.getRow() - b.getRow();
-    int colDelta = a.getCol() - b.getCol();
-
-    return (int)Math.sqrt(rowDelta*rowDelta + colDelta*colDelta);
-  }
+//  static private int distanceBetween(Location a, Location b) {
+//    int rowDelta = a.getRow() - b.getRow();
+//    int colDelta = a.getCol() - b.getCol();
+//
+//    return (int)Math.sqrt(rowDelta*rowDelta + colDelta*colDelta);
+//  }
 
   static private int quadrant(Location location) {
 
