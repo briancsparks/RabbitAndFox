@@ -199,40 +199,40 @@ class Rabbit extends Animal {
       direction_45 = direction - 1;
 
     // Decide which way to move
-    if (canMove(direction135)) {
-      rowCol(direction135);
+    if (canMove(direction135) ) {
+
       return direction135;
     }
 
-    if (canMove(direction_135)) {
-      rowCol(direction_135);
+    if (canMove(direction_135) ) {
+
       return direction_135;
     }
 
-    if (canMove(direction90)) {
-      rowCol(direction90);
+    if (canMove(direction90) ) {
+
       return direction90;
       //
     }
 
-    if (canMove(direction_90)) {
-      rowCol(direction_90);
+    if (canMove(direction_90) ) {
+
       return direction_90;
 
     }
 
     if (distance>5) {
-      if (canMove(direction45)) {
-        rowCol(direction45);
+      if (canMove(direction45) ) {
+
         return direction45;
       }
-      if (canMove(direction_45)) {
-        rowCol(direction_45);
+      else if (canMove(direction_45) ) {
+
         return direction_45;
       }
     } else {
-      if (canMove(direction180)) {
-        rowCol(direction180);
+      if (canMove(direction180) ) {
+
         return direction180;
       }
     }
@@ -240,35 +240,45 @@ class Rabbit extends Animal {
     return 0;
   }
 
+
+  public boolean tester()
+  {
+    if(rabbitCol1 != 18 && rabbitCol1 != 1 && rabbitRow1 != 18 && rabbitRow1 != 1)
+    {
+      return true;
+    }
+    return false;
+  }
+
   public void rowCol(int direction)
   {
     if (direction == 0 )
-      rabbitRow--;
+      rabbitRow1--;
     if(direction == 4)
-      rabbitRow++;
+      rabbitRow1++;
     if (direction == 2)
-      rabbitCol++;
+      rabbitCol1++;
     if(direction == 6)
-      rabbitCol--;
+      rabbitCol1--;
     if(direction == 1)
     {
-      rabbitRow++;
-      rabbitCol++;
+      rabbitRow1--;
+      rabbitCol1++;
     }
     if(direction == 3)
     {
-      rabbitRow++;
-      rabbitCol--;
+      rabbitRow1++;
+      rabbitCol1++;
     }
     if(direction == 5)
     {
-      rabbitRow--;
-      rabbitCol++;
+      rabbitRow1++;
+      rabbitCol1--;
     }
     if(direction == 7)
     {
-      rabbitRow--;
-      rabbitCol--;
+      rabbitRow1--;
+      rabbitCol1--;
     }
   }
 
@@ -283,50 +293,88 @@ class Rabbit extends Animal {
       }
     }
 
+    //rabbit used to get caught on the edges cause it would see the fox behind it and move towards the wall but now it moves towards the center
+    if(canSeeFoxNow && directionToFox==0 && rabbitCol1 > 16)
+    {
+      if(canMove(5))
+      {
+        rowCol(5);
+        return 5;
+      }
+    }
+    if(canSeeFoxNow && directionToFox==4  && rabbitCol1 > 16)
+    {
+      if(canMove(7))
+      {
+        rowCol(7);
+        return 7;
+      }
+    }
+    if(canSeeFoxNow && directionToFox==2  && rabbitRow1 > 15)
+    {
+      if(canMove(7))
+      {
+        rowCol(7);
+        return 7;
+      }
+    }
+    if(canSeeFoxNow && directionToFox==6  && rabbitRow1 > 15)
+    {
+      if(canMove(1))
+      {
+        rowCol(1);
+        return 1;
+      }
+    }
+    if(canSeeFoxNow && directionToFox==4  && rabbitCol1 < 4)
+    {
+      if(canMove(1))
+      {
+        rowCol(1);
+        return 1;
+      }
+    }
+    if(canSeeFoxNow && directionToFox==0  && rabbitCol1 < 4)
+    {
+      if(canMove(3))
+      {
+        rowCol(3);
+        return 3;
+      }
+    }
+    if(canSeeFoxNow && directionToFox==6  && rabbitRow1 < 4)
+    {
+      if(canMove(3))
+      {
+        rowCol(3);
+        return 3;
+      }
+    }
+    if(canSeeFoxNow && directionToFox==2  && rabbitRow1 < 4)
+    {
+      if(canMove(5))
+      {
+        rowCol(5);
+        return 5;
+      }
+    }
+
+
 
 
     //  System.out.println("Fox: "+foxRow +"x"+ foxCol);
 
-//System.out.println(rabbitRow + "x" + rabbitCol);
+//System.out.println(rabbitRow1 + "x" + rabbitCol1);
     // System.out.println("Rabbit: "+rabbitRow +"x"+ rabbitCol);
 
     if(canSeeFoxNow) {
       currentDirection = findDir(directionToFox, distanceToFox);
+      distanceToFox--;
       rowCol(currentDirection);
       return (currentDirection);
     }
 
 
-
-
-/*  if(rabbitCol > 16 )
-   {
-     rowCol(6);
-      return 6;
-    }
-    if(rabbitCol < 6 )
-    {
-      rowCol(2);
-      return 2;
-    }
-    if(rabbitRow > 16 )
-    {
-      rowCol(0);
-      return 0;
-    }
-    if(rabbitCol < 6 )
-    {
-      rowCol(4);
-      return 4;
-    }
-
- */
-
-
-//if(canMove(currentDirection)) {
-//  rowCol(currentDirection);
-//  return currentDirection;
-//}
     return Field.STAY;
   }
 
@@ -354,4 +402,11 @@ class Bush {
 
 
 
+
+
+
+
+
+
+//if rabbit is heading 4 and fox
 
