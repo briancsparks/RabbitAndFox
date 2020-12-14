@@ -81,6 +81,7 @@ class Fox extends Animal {
     // if rabbit has been seen recently,
     // move toward its last known position
     if (haveSeenRabbit) {
+      // System.out.println("x");
       if (distanceToRabbit > 0) {
         distanceToRabbit--;
         return directionToRabbit;
@@ -152,74 +153,90 @@ class Rabbit extends Animal {
   }
 
 
-  public int findDir(int direction) {
-    int direction1;
-    int direction2;
-    int direction3;
-    int direction4;
-    int direction5;
-    int direction6;
-    int direction7;
+  public int findDir(int direction, int distance) {
+    int direction90; //90
+    int direction_90; //-90
+    int direction135; //135
+    int direction_135; //-135
+    int direction180; //180
+    int direction45; //45
+    int direction_45; //-45
 
     if (direction > 5)
-      direction1 = direction - 6;
+      direction90 = direction - 6;
     else
-      direction1 = direction + 2;
+      direction90 = direction + 2;
 
     if (direction < 1)
-      direction2 = direction + 6;
+      direction_90 = direction + 6;
     else
-      direction2 = direction - 2;
+      direction_90 = direction - 2;
 
     if (direction > 4)
-      direction3 = direction - 5;
+      direction135 = direction - 5;
     else
-      direction3 = direction + 3;
+      direction135 = direction + 3;
 
     if (direction < 2)
-      direction4 = direction + 5;
+      direction_135 = direction + 5;
     else
-      direction4 = direction - 3;
+      direction_135 = direction - 3;
 
     if (direction < 4)
-      direction5 = direction + 4;
+      direction180 = direction + 4;
     else
-      direction5 = direction - 4;
+      direction180 = direction - 4;
 
 
     if (direction > 6)
-      direction6 = direction - 7;
+      direction45 = direction - 7;
     else
-      direction6 = direction + 1;
+      direction45 = direction + 1;
 
     if (direction < 1)
-      direction7 = direction + 7;
+      direction_45 = direction + 7;
     else
-      direction7 = direction - 1;
+      direction_45 = direction - 1;
 
-
-    if (canMove(direction1)) {
-      rowCol(direction1);
-      return direction1;
-    } else if (canMove(direction2)) {
-      rowCol(direction2);
-      return direction2;
-    } else if (canMove(direction3)) {
-      rowCol(direction3);
-      return direction3;
-    } else if (canMove(direction4)) {
-      rowCol(direction4);
-      return direction4;
-    } else if (canMove(direction5)) {
-      rowCol(direction5);
-      return direction5;
-    } else if (canMove(direction6)) {
-      rowCol(direction6);
-      return direction6;
-    } else if (canMove(direction7)) {
-      rowCol(direction7);
-      return direction7;
+    // Decide which way to move
+    if (canMove(direction135)) {
+      rowCol(direction135);
+      return direction135;
     }
+
+    if (canMove(direction_135)) {
+      rowCol(direction_135);
+      return direction_135;
+    }
+
+    if (canMove(direction90)) {
+      rowCol(direction90);
+      return direction90;
+      //
+    }
+
+    if (canMove(direction_90)) {
+      rowCol(direction_90);
+      return direction_90;
+
+    }
+
+    if (distance>5) {
+      if (canMove(direction45)) {
+        rowCol(direction45);
+        return direction45;
+      }
+      if (canMove(direction_45)) {
+        rowCol(direction_45);
+        return direction_45;
+      }
+    } else {
+      if (canMove(direction180)) {
+        rowCol(direction180);
+        return direction180;
+      }
+    }
+
     return 0;
   }
 
@@ -274,10 +291,11 @@ class Rabbit extends Animal {
     // System.out.println("Rabbit: "+rabbitRow +"x"+ rabbitCol);
 
     if(canSeeFoxNow) {
-      currentDirection = findDir(directionToFox);
+      currentDirection = findDir(directionToFox, distanceToFox);
       rowCol(currentDirection);
       return (currentDirection);
     }
+
 
 
 
@@ -305,10 +323,10 @@ class Rabbit extends Animal {
  */
 
 
-    if(canMove(currentDirection)) {
-      rowCol(currentDirection);
-      return currentDirection;
-    }
+//if(canMove(currentDirection)) {
+//  rowCol(currentDirection);
+//  return currentDirection;
+//}
     return Field.STAY;
   }
 
@@ -331,5 +349,9 @@ class Bush {
 
 
 //direction 1 = NE
+
+
+
+
 
 
