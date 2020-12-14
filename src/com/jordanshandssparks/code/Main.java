@@ -204,18 +204,18 @@ class Rabbit extends Animal {
       return direction135;
     }
 
-    if (canMove(direction_135) ) {
+    else if (canMove(direction_135) ) {
 
       return direction_135;
     }
 
-    if (canMove(direction90) ) {
+    else if (canMove(direction90) ) {
 
       return direction90;
       //
     }
 
-    if (canMove(direction_90) ) {
+    else if (canMove(direction_90) ) {
 
       return direction_90;
 
@@ -294,7 +294,10 @@ class Rabbit extends Animal {
     }
 
     //rabbit used to get caught on the edges cause it would see the fox behind it and move towards the wall but now it moves towards the center
-    if(canSeeFoxNow && directionToFox==0 && rabbitCol1 > 16)
+
+
+
+    if(canSeeFoxNow && directionToFox==0 && rabbitCol1 > 13)
     {
       if(canMove(5))
       {
@@ -302,7 +305,7 @@ class Rabbit extends Animal {
         return 5;
       }
     }
-    if(canSeeFoxNow && directionToFox==4  && rabbitCol1 > 16)
+    if(canSeeFoxNow && directionToFox==4  && rabbitCol1 > 13)
     {
       if(canMove(7))
       {
@@ -310,7 +313,7 @@ class Rabbit extends Animal {
         return 7;
       }
     }
-    if(canSeeFoxNow && directionToFox==2  && rabbitRow1 > 15)
+    if(canSeeFoxNow && directionToFox==2  && rabbitRow1 > 13)
     {
       if(canMove(7))
       {
@@ -318,7 +321,7 @@ class Rabbit extends Animal {
         return 7;
       }
     }
-    if(canSeeFoxNow && directionToFox==6  && rabbitRow1 > 15)
+    if(canSeeFoxNow && directionToFox==6  && rabbitRow1 > 13)
     {
       if(canMove(1))
       {
@@ -326,7 +329,7 @@ class Rabbit extends Animal {
         return 1;
       }
     }
-    if(canSeeFoxNow && directionToFox==4  && rabbitCol1 < 4)
+    if(canSeeFoxNow && directionToFox==4  && rabbitCol1 < 6)
     {
       if(canMove(1))
       {
@@ -334,7 +337,7 @@ class Rabbit extends Animal {
         return 1;
       }
     }
-    if(canSeeFoxNow && directionToFox==0  && rabbitCol1 < 4)
+    if(canSeeFoxNow && directionToFox==0  && rabbitCol1 < 6)
     {
       if(canMove(3))
       {
@@ -342,7 +345,7 @@ class Rabbit extends Animal {
         return 3;
       }
     }
-    if(canSeeFoxNow && directionToFox==6  && rabbitRow1 < 4)
+    if(canSeeFoxNow && directionToFox==6  && rabbitRow1 < 6)
     {
       if(canMove(3))
       {
@@ -350,7 +353,7 @@ class Rabbit extends Animal {
         return 3;
       }
     }
-    if(canSeeFoxNow && directionToFox==2  && rabbitRow1 < 4)
+    if(canSeeFoxNow && directionToFox==2  && rabbitRow1 < 6)
     {
       if(canMove(5))
       {
@@ -373,6 +376,29 @@ class Rabbit extends Animal {
       rowCol(currentDirection);
       return (currentDirection);
     }
+
+
+    if(rabbitRow1 == 19 && canMove(0))
+    {
+      rowCol(0);
+      return 0;
+    }
+    if(rabbitRow1 == 0 && canMove(4))
+    {
+      rowCol(4);
+      return 4;
+    }
+    if(rabbitCol1 == 19 && canMove(6))
+    {
+      rowCol(6);
+      return 6;
+    }
+    if(rabbitCol1 == 0 && canMove(2))
+    {
+      rowCol(2);
+      return 2;
+    }
+
 
 
     return Field.STAY;
@@ -409,4 +435,3 @@ class Bush {
 
 
 //if rabbit is heading 4 and fox
-
