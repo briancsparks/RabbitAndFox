@@ -118,36 +118,218 @@ class Fox extends Animal {
 }
 
 class Rabbit extends Animal {
+  private boolean haveSeenFox = false;
+  private boolean canSeeFoxNow = false;
+  private int distanceToFox;
+  private int directionToFox;
+  private int currentDirection;
+  private int oppDirectionToFox;
+
+
+  int rabbitRow;
+  int foxRow;
+  int rabbitCol;
+  int foxCol;
+  Location foxLocation;
+  int rabbitRow1;
+  int rabbitCol1;
 
   public Rabbit(Field field, int row, int column) {
     super(field, row, column);
+    Location foxLocation = field.getFoxLocation();
+    Location rabbitLocation = field.getRabbitLocation();
+    int rabbitRow = rabbitLocation.getRow();
+    int foxRow = foxLocation.getRow();
+    int rabbitCol = rabbitLocation.getCol();
+    int foxCol = foxLocation.getCol();
+    this.rabbitRow = rabbitRow;
+    this.foxRow = foxRow;
+    this.rabbitCol = rabbitCol;
+    this.foxCol = foxCol;
+    this.foxLocation = foxLocation;
+    rabbitRow1 = rabbitRow;
+    rabbitCol1 = rabbitCol;
+  }
+
+
+  public int findDir(int direction) {
+    int direction1;
+    int direction2;
+    int direction3;
+    int direction4;
+    int direction5;
+    int direction6;
+    int direction7;
+
+    if (direction > 5)
+      direction1 = direction - 6;
+    else
+      direction1 = direction + 2;
+
+    if (direction < 1)
+      direction2 = direction + 6;
+    else
+      direction2 = direction - 2;
+
+    if (direction > 4)
+      direction3 = direction - 5;
+    else
+      direction3 = direction + 3;
+
+    if (direction < 2)
+      direction4 = direction + 5;
+    else
+      direction4 = direction - 3;
+
+    if (direction < 4)
+      direction5 = direction + 4;
+    else
+      direction5 = direction - 4;
+
+
+    if (direction > 6)
+      direction6 = direction - 7;
+    else
+      direction6 = direction + 1;
+
+    if (direction < 1)
+      direction7 = direction + 7;
+    else
+      direction7 = direction - 1;
+
+
+    if (canMove(direction1)) {
+      rowCol(direction1);
+      return direction1;
+    } else if (canMove(direction2)) {
+      rowCol(direction2);
+      return direction2;
+    } else if (canMove(direction3)) {
+      rowCol(direction3);
+      return direction3;
+    } else if (canMove(direction4)) {
+      rowCol(direction4);
+      return direction4;
+    } else if (canMove(direction5)) {
+      rowCol(direction5);
+      return direction5;
+    } else if (canMove(direction6)) {
+      rowCol(direction6);
+      return direction6;
+    } else if (canMove(direction7)) {
+      rowCol(direction7);
+      return direction7;
+    }
+    return 0;
+  }
+
+  public void rowCol(int direction)
+  {
+    if (direction == 0 )
+      rabbitRow--;
+    if(direction == 4)
+      rabbitRow++;
+    if (direction == 2)
+      rabbitCol++;
+    if(direction == 6)
+      rabbitCol--;
+    if(direction == 1)
+    {
+      rabbitRow++;
+      rabbitCol++;
+    }
+    if(direction == 3)
+    {
+      rabbitRow++;
+      rabbitCol--;
+    }
+    if(direction == 5)
+    {
+      rabbitRow--;
+      rabbitCol++;
+    }
+    if(direction == 7)
+    {
+      rabbitRow--;
+      rabbitCol--;
+    }
   }
 
   public int decideMove() {
-    return random(Field.MIN_DIRECTION, Field.MAX_DIRECTION);
+    canSeeFoxNow = false;
+    //find direction of fox if seen
+    for (int i = Field.MIN_DIRECTION; i <= Field.MAX_DIRECTION; i++) {
+      if (getObjectInDirection(i) == Field.FOX) {
+        canSeeFoxNow = haveSeenFox = true;
+        directionToFox = i;
+        distanceToFox = distanceToObject(i);
+      }
+    }
+
+
+
+    //  System.out.println("Fox: "+foxRow +"x"+ foxCol);
+
+//System.out.println(rabbitRow + "x" + rabbitCol);
+    // System.out.println("Rabbit: "+rabbitRow +"x"+ rabbitCol);
+
+    if(canSeeFoxNow) {
+      currentDirection = findDir(directionToFox);
+      rowCol(currentDirection);
+      return (currentDirection);
+    }
+
+
+
+/*  if(rabbitCol > 16 )
+   {
+     rowCol(6);
+      return 6;
+    }
+    if(rabbitCol < 6 )
+    {
+      rowCol(2);
+      return 2;
+    }
+    if(rabbitRow > 16 )
+    {
+      rowCol(0);
+      return 0;
+    }
+    if(rabbitCol < 6 )
+    {
+      rowCol(4);
+      return 4;
+    }
+
+ */
+
+
+    if(canMove(currentDirection)) {
+      rowCol(currentDirection);
+      return currentDirection;
+    }
+    return Field.STAY;
+  }
+
+
+  public int oppositeDir(int direction)
+  {
+    int oppositeDir;
+    if (direction <= 3)
+      oppositeDir = direction + 4;
+    else
+      oppositeDir = direction - 4;
+    //  }
+    return oppositeDir;
   }
 
 }
-
 class Bush {
 
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//direction 1 = NE
 
 
