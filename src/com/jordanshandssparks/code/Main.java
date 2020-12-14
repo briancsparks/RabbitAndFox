@@ -5,6 +5,10 @@ import java.util.Random;
 
 class Animal {
 
+  public boolean quiet = true;
+  public boolean quiet1 = true;
+  public boolean quiet2 = true;
+
   // instance variables -- every animal has a location
   private Field model;
   int row;
@@ -15,6 +19,29 @@ class Animal {
     this.model = model;
     this.row = row;
     this.column = column;
+  }
+
+  public void print(String msg) {
+    if (quiet) {
+      return;
+    }
+
+    System.out.printf("%s", msg);
+  }
+
+  public void print1(String msg) {
+    if (quiet1) { return; }
+    if (quiet || !quiet2) { return; }
+
+    System.out.printf("%s", msg);
+  }
+
+  public void print2(String msg) {
+    if (quiet2) {
+      return;
+    }
+
+    System.out.printf("%s", msg);
   }
 
   static int random(int min, int max) {
@@ -65,6 +92,10 @@ class Fox extends Animal {
     super(model, row, column);
     currentDirection = Field.random(Field.MIN_DIRECTION,
       Field.MAX_DIRECTION);
+
+    quiet = true;
+    quiet1 = true;
+    quiet2 = true;
   }
 
   int decideMove() {
@@ -72,6 +103,12 @@ class Fox extends Animal {
     canSeeRabbitNow = false;
     for (int i = Field.MIN_DIRECTION; i <= Field.MAX_DIRECTION; i++) {
       if (getObjectInDirection(i) == Field.RABBIT) {
+
+        // Only print the first time rabbit has been seen
+        if (distanceToRabbit == 0) {
+          print(String.format("\nSee rabbit %d squares away  (%d, %d)", distanceToObject(i), row, column));
+        }
+
         canSeeRabbitNow = haveSeenRabbit = true;
         directionToRabbit = i;
         distanceToRabbit = distanceToObject(i);
@@ -85,8 +122,14 @@ class Fox extends Animal {
     if (haveSeenRabbit) {
       if (distanceToRabbit > 0) {
         distanceToRabbit--;
+        print1(String.format(",%d", distanceToRabbit));
+        print2(String.format(" Hunting rabbit %d squares away\n", distanceToRabbit));
         return directionToRabbit;
+
       } else { // rabbit was here--where did it go?
+        print1(String.format(" !%d", canSeeRabbitNow ? 1 : 0));
+        print2(String.format(" Where did he go? (cansee: %b)  ", canSeeRabbitNow));
+
         haveSeenRabbit = false;
         currentDirection = Field.random(Field.MIN_DIRECTION,
           Field.MAX_DIRECTION);
@@ -94,26 +137,36 @@ class Fox extends Animal {
     }
     // either haven't seen rabbit, or lost track of rabbit
     // continue with current direction, maybe dodging bushes
-    if (canMove(currentDirection))
+    if (canMove(currentDirection)) {
+      print1(String.format(" _%d", canSeeRabbitNow ? 1 : 0));
+      print2(String.format(" Just Keep going. (cansee: %b)\n", canSeeRabbitNow));
       return currentDirection;
-    else if
-    (canMove(Field.calculateNewDirection(currentDirection, 1)))
+
+    } else if (canMove(Field.calculateNewDirection(currentDirection, 1))) {
+      print1(String.format(" >%d", canSeeRabbitNow ? 1 : 0));
+//      print2(String.format(" Just Keep going. (cansee: %b)\n", canSeeRabbitNow));
       return Field.calculateNewDirection(currentDirection, 1);
-    else if
-    (canMove(Field.calculateNewDirection(currentDirection, -1)))
+    } else if (canMove(Field.calculateNewDirection(currentDirection, -1))) {
+      print1(String.format(" <%d", canSeeRabbitNow ? 1 : 0));
+//      print2(String.format(" Just Keep going. (cansee: %b)\n", canSeeRabbitNow));
       return Field.calculateNewDirection(currentDirection, -1);
-    else {
+    } else {
       currentDirection = Field.random(Field.MIN_DIRECTION,
         Field.MAX_DIRECTION);
       for (int i = 0; i < 8; i++) {
-        if (canMove(currentDirection))
+        if (canMove(currentDirection)) {
+          print1(String.format(" %%d", canSeeRabbitNow ? 1 : 0));
+//          print2(String.format(" Just Keep going. (cansee: %b)\n", canSeeRabbitNow));
           return currentDirection;
+        }
         else
           currentDirection = Field.calculateNewDirection(
             currentDirection, 1);
       }
     }
     // stuck!
+    print1(String.format(" .%d", canSeeRabbitNow ? 1 : 0));
+    print2(String.format(" Stuck. (cansee: %b)\n", canSeeRabbitNow));
     return Field.STAY;
   }
 
@@ -123,13 +176,22 @@ class Bush {
 
 }
 
+//class Rabbit extends Animal {
+//  public Rabbit(Field model, int row, int column) {
+//    super(model, row, column);
+//  }
+//
+//  public int decideMove() {
+//    return Field.STAY;
+//  }
+//}
+
 class Rabbit extends Animal {
-
-  static char dirSymbols[] = {'^', '7', '>', 'J', 'v', 'L', '<', '\\', '*'};
-
   public Rabbit(Field model, int row, int column) {
     super(model, row, column);
   }
+
+  static char dirSymbols[] = {'^', '7', '>', 'J', 'v', 'L', '<', '\\', '*'};
 
   public int decideMove() {
     for (int i = Field.MIN_DIRECTION; i <= Field.MAX_DIRECTION; i++) {
