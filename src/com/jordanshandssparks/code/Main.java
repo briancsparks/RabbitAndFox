@@ -123,7 +123,8 @@ class Fox extends Animal {
         if (distanceToRabbit == 0) {
           Location rabbitLocation = myModel.getRabbitLocation();
           print(String.format("\n%3d See rabbit %3d squares away  (%2d, %2d) (%2d, %2d)", myModel.getStepsTaken(), distanceToObject(i), row, column, rabbitLocation.getRow(), rabbitLocation.getCol()));
-//          System.out.print(String.format("\n%3d See rabbit %3d squares away  (%2d, %2d) (%2d, %2d)", myModel.getStepsTaken(), distanceToObject(i), row, column, rabbitLocation.getRow(), rabbitLocation.getCol()));
+
+//          System.out.print(String.format("\n%3d See rabbit %3d squares away  (%2d, %2d) (%2d, %2d)", myModel.getStepsTaken(), distanceToObject(i), row, column, rabbitLocation.getRow(), rabbitLocation.getCol()));     // LOOKATME
         }
 
         canSeeRabbitNow = haveSeenRabbit = true;
@@ -278,7 +279,7 @@ class Rabbit extends Animal {
           return bestSafeDirection;
         }
 
-        System.out.printf("Forced to move unsafe Dir: %d, j: %d, safety: %d\n", willSettleFor, chosen_j, chosen_safety);
+//        System.out.printf("Forced to move unsafe Dir: %d, j: %d, safety: %d\n", willSettleFor, chosen_j, chosen_safety);    // LOOKATME
 
         return willSettleFor;
       }
@@ -343,6 +344,7 @@ class Rabbit extends Animal {
 
     // Move away from obstacles
 
+    // LOOKATME -- Never sure what is right here
     return Field.STAY;
 //    return random(Field.MIN_DIRECTION, Field.MAX_DIRECTION);
   }

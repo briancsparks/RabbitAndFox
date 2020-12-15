@@ -161,8 +161,10 @@ public class Field {
     rabbitIsAlive = true;
     isRabbitsTurn = false; // will be changed before first move
     stepsTaken = 0;
+
     // populate using new random numbers
     oldRandomSeed = randomNumberGenerator.nextLong();
+//    oldRandomSeed = 7547128424490245143L;         // LOOKATME
     randomNumberGenerator.setSeed(oldRandomSeed);
     populate();
   }
@@ -255,9 +257,9 @@ public class Field {
     for (int i = 0; i < numberOfBushes; i++) {
       int bushRow = random(0, numRows - 1);
       int bushColumn = random(0, numCols - 1);
-//      if (field[bushRow][bushColumn] == Field.EMPTY) {
-//        field[bushRow][bushColumn] = bush;
-//      } else i--;
+      if (field[bushRow][bushColumn] == Field.EMPTY) {
+        field[bushRow][bushColumn] = bush;
+      } else i--;
     }
 
     // finish
@@ -595,19 +597,17 @@ public class Field {
     if (isRabbitsTurn) {
       stepsTaken++;
     } else if (stepsTaken >= MAX_NUMBER_OF_STEPS) {
-//      if (!rabbitIsAlive) {
-//        System.out.printf("\nGame Over -- %b!", rabbitIsAlive);
-//      }
-
       gameIsOver = true;
     }
 
 //    if (gameIsOver) {
 //      if (!rabbitIsAlive) {
-//        System.out.printf("\n-------------- %3d GameOver (%2d, %2d) (%2d, %2d)  Bunny is alive (%b); my turn (%b)\n", stepsTaken,
-//          rabbit.row, rabbit.column, fox.row, fox.column, rabbitIsAlive, isRabbitsTurn);
+//        System.out.printf("\n-------------- Turn %3d GameOver (%2d, %2d) (%2d, %2d)  Bunny is alive (%b); my turn (%b)\n", stepsTaken,
+//          rabbit.row, rabbit.column, fox.row, fox.column, rabbitIsAlive, isRabbitsTurn);              // LOOKATME
 //
-//        printField();
+//        System.out.printf("RNG: %d\n", oldRandomSeed);
+//
+////        printField();
 //      }
 //    }
 

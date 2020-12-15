@@ -36,7 +36,7 @@ public class Grader {
     // compute base score as percent of rabbit escapes
     int numberOfEscapes = 0;
     for (int i = 0; i < NUMBER_OF_TRIALS; i++) {
-//      System.out.printf("\n%5d -- ", i);
+//      System.out.printf("\n%5d -- ", i);      // LOOKATME
       model.reset();
       while (!model.gameIsOver) {
         model.allowSingleMove();
